@@ -46,7 +46,7 @@ public class TestController {
         return ResponseEntity.ok(responseEntity.getBody());
     }
 
-    @RequestMapping("/welcome-msg")
+    @RequestMapping("/welcomes-msg")
     @ResponseBody
     public ResponseEntity<?> getWelcomeMsg(){
         final List<NameEntity> names = nameService.findAllNames();

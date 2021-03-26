@@ -40,24 +40,80 @@
         }
 
         function getWelcomeMsg() {
-            $.get(baseUrl + "welcome-msg",  function (data) {
+            $.get(baseUrl + "welcomes-msg",  function (data) {
                 $('#welcome-msg').append("Hello, " + data);
             });
         }
 
+        function showItineraryView() {
+            var today = new Date();
+            var maxDay = new Date();
+            maxDay.setDate(maxDay.getDate()+5);
+            var dd = today.getDate();
+            var ddmax = maxDay.getDate();
+            var mm = today.getMonth()+1; //January is 0!
+            var mmMax = maxDay.getMonth()+1;
+            var yyyy = today.getFullYear();
+            var yyyyMax = maxDay.getFullYear();
+            if(dd<10){
+                dd='0'+dd
+            } 
+            if(ddmax<10){
+                ddmax='0'+ddmax
+            } 
+            if(mm<10){
+                mm='0'+mm
+            }
+            if(mmMax<10){
+                mmMax='0'+mmMax
+            } 
+
+            today = yyyy+'-'+mm+'-'+dd;
+            maxdate = yyyyMax+'-'+mmMax+'-'+ddmax;
+            document.getElementById("traveldate1").setAttribute("min", today);
+            document.getElementById("traveldate1").setAttribute("max", maxdate);
+            document.getElementById("traveldate2").setAttribute("min", today);
+            document.getElementById("traveldate2").setAttribute("max", maxdate);
+            document.getElementById("traveldate3").setAttribute("min", today);
+            document.getElementById("traveldate3").setAttribute("max", maxdate);
+        }
+
+        function todayDate() {
+            var today = new Date();
+            return "2021-03-27";
+        }
+
         $(document).ready(function(){
-            getWelcomeMsg();
-            getPostListing();
+            showItineraryView();
+            //getWelcomeMsg();
+            //getPostListing();
             });
     </script>
 
 </head>
 <body>
-<h1 id="welcome-msg" align="center">
+    <h1>Itinerary Form</h1>
 
-</h1>
+    <form action="/">
+      <label for="cityname1">City Name:</label>
+      <input type="text" id="cityname1" name="cityname" value="">
+      <label for="traveldate">Travel Date:</label>
+      <input type="date" id="traveldate1" name="Travel Date" required><br/>
+      <label for="cityname2">City Name:</label>
+      <input type="text" id="cityname2" name="cityname" value="">
+      <label for="traveldate">Travel Date:</label>
+      <input type="date" id="traveldate2" name="Travel Date" required><br/>
+      <label for="cityname3">City Name:</label>
+      <input type="text" id="cityname3" name="cityname" value="">
+      <label for="traveldate">Travel Date:</label>
+      <input type="date" id="traveldate3" name="Travel Date" required>
+      <br/><br/><input type="submit" value="Submit">
+    </form> 
+    <h1 id="welcome-msg" align="center">
 
-<div id="post-list-table" align="center">
+    </h1>
+
+    <div id="post-list-table" align="center">
 
 </div>
 
