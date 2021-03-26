@@ -1,3 +1,6 @@
+# All files inside taget directory
+test/target/*
+
 # Compiled class file
 *.class
 
