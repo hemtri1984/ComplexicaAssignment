@@ -134,7 +134,7 @@
                     type: "GET",
                     contentType: "application/json",
                     url: "/current",
-                    headers: {"cityname": city1},
+                    headers: {"cityname": city},
                     timeout: 60000,
                     success: function (data) {
 
@@ -145,12 +145,12 @@
                 });
         }
 
-        function getForecastData(city) {
+        function getForecastData(city, date) {
             $.ajax({
                     type: "GET",
                     contentType: "application/json",
                     url: "/forecast",
-                    headers: {"cityname": city1},
+                    headers: {"cityname": city, "date": date},
                     timeout: 60000,
                     success: function (data) {
 
@@ -168,7 +168,7 @@
                 if(date1 === getTodayDate()) {//get today forecast
                     getTodaysData(city1);
                 } else {//get next 5 days forecast
-                    getForecastData(city1);
+                    getForecastData(city1, date1);
                 }
             }
 
@@ -176,7 +176,7 @@
                 if(date2 === getTodayDate()) {//get today forecast
                     getTodaysData(city2);
                 } else {//get next 5 days forecast
-                    getForecastData(city2);
+                    getForecastData(city2, date2);
                 }
             }
 
@@ -184,7 +184,7 @@
                 if(date3 === getTodayDate()) {//get today forecast
                     getTodaysData(city3);
                 } else {//get next 5 days forecast
-                    getForecastData(city3);
+                    getForecastData(city3, date3);
                 }
             }
 

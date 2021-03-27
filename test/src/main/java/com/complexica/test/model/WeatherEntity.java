@@ -11,14 +11,23 @@ public class WeatherEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String cityName;
-    private String countryName;
+    private String country;
     private String countryCode;
     private Float temperature;
     private String weather;
+    private String weatherDate;
     private Long recordTime;
 
     public Long getId() {
         return id;
+    }
+
+    public String getDate() {
+        return weatherDate;
+    }
+
+    public void setDate(String weatherDate) {
+        this.weatherDate = weatherDate;
     }
 
     public Long getRecordTime() {
@@ -54,11 +63,11 @@ public class WeatherEntity {
     }
 
     public String getCountryName() {
-        return countryName;
+        return country;
     }
 
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
+    public void setCountryName(String country) {
+        this.country = country;
     }
 
     public String getCityName() {
@@ -80,16 +89,17 @@ public class WeatherEntity {
         WeatherEntity that = (WeatherEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(cityName, that.cityName) &&
-                Objects.equals(countryName, that.countryName) &&
+                Objects.equals(country, that.country) &&
                 Objects.equals(countryCode, that.countryCode) &&
                 Objects.equals(temperature, that.temperature) &&
                 Objects.equals(weather, that.weather) &&
-                Objects.equals(recordTime, that.recordTime);
+                Objects.equals(recordTime, that.recordTime) &&
+                Objects.equals(weatherDate, that.weatherDate) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, countryName+cityName);
+        return Objects.hash(id, country+cityName);
     }
 
     @Override
@@ -97,11 +107,12 @@ public class WeatherEntity {
         return "NameEntity{" +
                 "id=" + id +
                 ", cityName='" + cityName + '\'' +
-                ", countryName='" + countryName + '\'' +
+                ", countryName='" + country + '\'' +
                 ", countryCode='" + countryCode + '\'' +
                 ", temperature='" + temperature + '\'' +
                 ", weather='" + weather + '\'' +
                 ", recordTime='" + recordTime + '\'' +
+                ", date='" + weatherDate + '\'' +
                 '}';
     }
 
