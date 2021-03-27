@@ -33,6 +33,9 @@ public class TestController {
     @RequestMapping("/forecast")
     @ResponseBody
     public ResponseEntity<?> getPostList() {
+        //first check if data is available in the cache
+
+        //Else fetch from weather api and save into database and then send back.
         final String url = "http://api.openweathermap.org/data/2.5/forecast?q=Adelaide&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<ForecastData> responseEntity = restTemplate.getForEntity(url, ForecastData.class);
         return ResponseEntity.ok(responseEntity.getBody());
@@ -41,6 +44,9 @@ public class TestController {
     @RequestMapping("/current")
     @ResponseBody
     public ResponseEntity<?> getCurrentWeather() {
+        //first check if data is available in the cache
+
+        //Else fetch from weather api and save into database and then send back.
         final String url = "http://api.openweathermap.org/data/2.5/weather?q=Adelaide&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<Current> responseEntity = restTemplate.getForEntity(url, Current.class);
         return ResponseEntity.ok(responseEntity.getBody());

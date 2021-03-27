@@ -1,0 +1,28 @@
+h1 {
+    color: navy;
+    text-align: center;
+  }
+
+label {
+    color: darkred;
+    font-weight: bold;
+}
+
+caption {
+    font-weight: bold;
+    font-family: fantasy;
+    font-size: 35px;
+    color: forestgreen;
+}
+
+#tableheader {
+    font-weight: bold;
+    font-family: fantasy;
+    color: forestgreen;
+    font-size: 20px;
+}
+
+#tb002 {
+    text-align: center;
+    font-family: fantasy;
+}

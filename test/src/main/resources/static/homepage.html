@@ -1,5 +1,6 @@
 <html>
 <head>
+    <link rel="stylesheet" href="style.css">
     <script src="./jquery-3.4.1.min.js">  </script>
 
     <script type="text/javascript">
@@ -45,7 +46,37 @@
             });
         }
 
-        function showItineraryView() {
+        function getItineraryInfo(date) {
+            if(date) {
+                alert("Generating Itinerary Info of date: "+date);
+            } else {
+                alert("Please enter the date!");
+            }
+        }
+
+        function addRow(tableID) {
+
+            var table = document.getElementById(tableID);
+
+            var time = "(3:00 PM)";
+
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            var cell1 = row.insertCell(0);
+            cell1.innerHTML = "City 1";
+            var cell2 = row.insertCell(1);
+            cell2.innerHTML = "Country 1";
+            var cell3 = row.insertCell(2);
+            cell3.innerHTML = "Country Code 1";
+            var cell4 = row.insertCell(3);
+            cell4.innerHTML = "Temperature 1" + time + ", Temperature 2"+time;
+            var cell5 = row.insertCell(4);
+            cell5.innerHTML = "Cloud 1";
+
+        }
+
+        function validateItineraryDate() {
             var today = new Date();
             var maxDay = new Date();
             maxDay.setDate(maxDay.getDate()+5);
@@ -78,13 +109,37 @@
             document.getElementById("traveldate3").setAttribute("max", maxdate);
         }
 
-        function todayDate() {
-            var today = new Date();
-            return "2021-03-27";
+        function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
+            alert("Form submitted. City 1: "+city1+" Date1: "+date1+" City 2:"+city2+" date2: "+date2);
+        }
+
+        function saveItinerary(city1, date1, city2, date2, city3, date3) {
+            alert("Itinerary Saved")
+            var table = document.getElementById("tb001");
+            if (table.style.display === "none") {
+                showTable();
+            } else {
+                hideTable();
+            }
+        }
+
+        function hideTable() {
+            var table = document.getElementById("tb001");
+            table.style.display = "none";
+        }
+
+        function showTable() {
+            var table = document.getElementById("tb001");
+            table.style.display = "block";
+        }
+
+        function generateSummary() {
+            alert("Generating Summary")
+            addRow("tb002");
         }
 
         $(document).ready(function(){
-            showItineraryView();
+            validateItineraryDate();
             //getWelcomeMsg();
             //getPostListing();
             });
@@ -94,21 +149,42 @@
 <body>
     <h1>Itinerary Form</h1>
 
-    <form action="/">
+    <form>
       <label for="cityname1">City Name:</label>
-      <input type="text" id="cityname1" name="cityname" value="">
+      <input type="text" id="cityname1" name="cityname" value="" required placeholder="First City Name">
       <label for="traveldate">Travel Date:</label>
       <input type="date" id="traveldate1" name="Travel Date" required><br/>
       <label for="cityname2">City Name:</label>
-      <input type="text" id="cityname2" name="cityname" value="">
+      <input type="text" id="cityname2" name="cityname" value="" placeholder="Second City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate2" name="Travel Date" required><br/>
+      <input type="date" id="traveldate2" name="Travel Date"><br/>
       <label for="cityname3">City Name:</label>
-      <input type="text" id="cityname3" name="cityname" value="">
+      <input type="text" id="cityname3" name="cityname" value="" placeholder="Third City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate3" name="Travel Date" required>
-      <br/><br/><input type="submit" value="Submit">
-    </form> 
+      <input type="date" id="traveldate3" name="Travel Date">
+      <br/><br/><input type="submit" value="Submit" onclick="validateAndSubmitItinerary(document.getElementById('cityname1').value, document.getElementById('traveldate1').value, 
+            document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
+      <input type="submit" value="Save Itineraty" onclick="saveItinerary(document.getElementById('cityname1').value, document.getElementById('traveldate1').value, 
+      document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
+      <input type="button" value="Generate Summary" onclick="generateSummary()">
+    </form>
+    <br/><br/>
+    <form>
+      <input type="date" id="itineraryinfo" name="Date" required><br/>
+      <input type="submit" value="Get Itinerary" onclick="getItineraryInfo(document.getElementById('itineraryinfo').value)">
+    </form>
+    <br/><br/>
+    <div id="tb001"><table id="tb002" style="width:100%" border="1">
+        <caption>Weather Results</caption>
+        <tr id="tableheader">
+          <th>City Name</th>
+          <th>Country Name</th>
+          <th>Country code</th>
+          <th>Temperature</th>
+          <th>Weather</th>
+        </tr>        
+      </table></div>
+
     <h1 id="welcome-msg" align="center">
 
     </h1>
