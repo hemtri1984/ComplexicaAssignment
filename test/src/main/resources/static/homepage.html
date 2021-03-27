@@ -137,7 +137,7 @@
                     headers: {"cityname": city1},
                     timeout: 60000,
                     success: function (data) {
-                        
+
                     },
                     error: function (e) {
                         
@@ -146,20 +146,48 @@
         }
 
         function getForecastData(city) {
+            $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/forecast",
+                    headers: {"cityname": city1},
+                    timeout: 60000,
+                    success: function (data) {
 
+                    },
+                    error: function (e) {
+                        
+                    }
+                });
         }
 
         function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
             alert("Form submitted. City 1: "+city1+" Date1: "+date1+" City 2:"+city2+" date2: "+date2);
             var today = new Date();
-
             if(city1 && date1) {
                 if(date1 === getTodayDate()) {//get today forecast
-
+                    getTodaysData(city1);
                 } else {//get next 5 days forecast
-
+                    getForecastData(city1);
                 }
             }
+
+            if(city2 && date2) {
+                if(date2 === getTodayDate()) {//get today forecast
+                    getTodaysData(city2);
+                } else {//get next 5 days forecast
+                    getForecastData(city2);
+                }
+            }
+
+            if(city3 && date3) {
+                if(date3 === getTodayDate()) {//get today forecast
+                    getTodaysData(city3);
+                } else {//get next 5 days forecast
+                    getForecastData(city3);
+                }
+            }
+
         }
 
         function saveItinerary(city1, date1, city2, date2, city3, date3) {

@@ -17,9 +17,18 @@ public class ItineraryEntity {
     private String weather;
     private String travelDate;
     private String advice;
+    private Long timestamp;
 
     public Long getId() {
         return id;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getWeather() {
@@ -94,7 +103,8 @@ public class ItineraryEntity {
                 Objects.equals(temperature, that.temperature) &&
                 Objects.equals(weather, that.weather) &&
                 Objects.equals(travelDate, that.travelDate)  &&
-                Objects.equals(advice, that.advice);
+                Objects.equals(advice, that.advice) && 
+                Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
@@ -113,6 +123,7 @@ public class ItineraryEntity {
                 ", weather='" + weather + '\'' +
                 ", travelDate='" + travelDate + '\'' +
                 ", advice='" + advice + '\'' +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
     
