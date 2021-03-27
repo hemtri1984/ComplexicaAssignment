@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
@@ -32,22 +33,24 @@ public class TestController {
 
     @RequestMapping("/forecast")
     @ResponseBody
-    public ResponseEntity<?> getPostList() {
+    public ResponseEntity<?> getFivedaysForecast(@RequestHeader("cityname") String cityname) {
+        System.out.println("City Name: "+cityname);
         //first check if data is available in the cache
-
+        
         //Else fetch from weather api and save into database and then send back.
-        final String url = "http://api.openweathermap.org/data/2.5/forecast?q=Adelaide&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "http://api.openweathermap.org/data/2.5/forecast?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<ForecastData> responseEntity = restTemplate.getForEntity(url, ForecastData.class);
         return ResponseEntity.ok(responseEntity.getBody());
     }
 
     @RequestMapping("/current")
     @ResponseBody
-    public ResponseEntity<?> getCurrentWeather() {
+    public ResponseEntity<?> getCurrentWeather(@RequestHeader("cityname") String cityname) {
+        System.out.println("City Name: "+cityname);
         //first check if data is available in the cache
-
+        
         //Else fetch from weather api and save into database and then send back.
-        final String url = "http://api.openweathermap.org/data/2.5/weather?q=Adelaide&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "http://api.openweathermap.org/data/2.5/weather?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<Current> responseEntity = restTemplate.getForEntity(url, Current.class);
         return ResponseEntity.ok(responseEntity.getBody());
     }

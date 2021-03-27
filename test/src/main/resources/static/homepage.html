@@ -109,8 +109,57 @@
             document.getElementById("traveldate3").setAttribute("max", maxdate);
         }
 
+        function getTodayDate() {//Return today date in format of dd/mm/yyyy
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            if(dd<10){
+                dd='0'+dd
+            } 
+            if(mm<10){
+                mm='0'+mm
+            }
+
+            today = yyyy+'/'+mm+'/'+dd;
+            return today;
+        }
+
+        function getTodaysData(city) {
+            /*$.get(baseUrl + "current",  function (data) {
+                    $('#welcome-msg').append("Hello, " + data);
+                });*/
+
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/current",
+                    headers: {"cityname": city1},
+                    timeout: 60000,
+                    success: function (data) {
+                        
+                    },
+                    error: function (e) {
+                        
+                    }
+                });
+        }
+
+        function getForecastData(city) {
+
+        }
+
         function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
             alert("Form submitted. City 1: "+city1+" Date1: "+date1+" City 2:"+city2+" date2: "+date2);
+            var today = new Date();
+
+            if(city1 && date1) {
+                if(date1 === getTodayDate()) {//get today forecast
+
+                } else {//get next 5 days forecast
+
+                }
+            }
         }
 
         function saveItinerary(city1, date1, city2, date2, city3, date3) {
