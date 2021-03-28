@@ -40,5 +40,10 @@ public class WeatherServiceImpl implements WeatherService {
     public void createWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date, String time) {
         weatherRepository.createWeather(city, countryName, countryCode, temperature, weather, date, time, new Date());
     }
+
+    @Override
+    public List<WeatherEntity> findWeatherByDate(String date) {
+        return weatherRepository.getWeatherByDate(date);
+    }
     
 }

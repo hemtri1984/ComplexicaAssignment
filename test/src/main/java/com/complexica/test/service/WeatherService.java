@@ -9,4 +9,5 @@ public interface WeatherService {
     List<WeatherEntity> findWeatherOfCity(String city, String date);
     WeatherEntity invalidateAndRefreshWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date, String time);
     void createWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date, String time);
+    List<WeatherEntity> findWeatherByDate(String date);
 }

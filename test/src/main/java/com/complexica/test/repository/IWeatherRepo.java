@@ -29,4 +29,7 @@ public interface IWeatherRepo extends JpaRepository<WeatherEntity, Long> {
     @Transactional
     void createWeather(@Param("cityname") String cityName, @Param("countryname") String countryName, @Param("ccode") String countryCode, @Param("temp") Float temperature, @Param("weather") String weather, @Param("date") String date, @Param("weathertime") String weathertime, @Param("time") Date recordTime);
 
+    @Query("select we from WeatherEntity we where we.weatherdate = :date")
+    List<WeatherEntity> getWeatherByDate(@Param("date") String date);
+
 }

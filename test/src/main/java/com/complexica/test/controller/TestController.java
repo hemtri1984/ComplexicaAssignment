@@ -13,6 +13,7 @@ import com.complexica.test.utils.AppUtility;
 import com.complexica.test.utils.IAppConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -48,6 +49,20 @@ public class TestController {
         return mav;
     }
 
+    @RequestMapping("/itinerary")
+    @ResponseBody
+    public ResponseEntity<?> getFivedaysForecast(@RequestHeader("traveldate") String date) {
+        System.out.println("Itinerary Date: "+date);
+        //first check if data is available in the cache
+        List<WeatherEntity> weatherData = weatherService.findWeatherByDate(date);
+        if(weatherData != null && weatherData.size() > 0) {
+            System.out.println("Weather data size: "+weatherData.size());
+            return ResponseEntity.ok(weatherData);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @RequestMapping("/forecast")
     @ResponseBody
     public ResponseEntity<?> getFivedaysForecast(@RequestHeader("cityname") String cityname, @RequestHeader("traveldate") String date) {
@@ -72,7 +87,7 @@ public class TestController {
 
     private List<WeatherEntity> getWeatherDataFromOpenweathermap(boolean invalidate, String cityname, String date) {
         //Else fetch from weather api and save into database and then send back.
-        final String url = "http://api.openweathermap.org/data/2.5/forecast?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "https://api.openweathermap.org/data/2.5/forecast?q="+cityname+"&units=metric&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<ForecastData> responseEntity = restTemplate.getForEntity(url, ForecastData.class);
         ForecastData currentWeather = responseEntity.getBody();
         String cityName = currentWeather.getCity().getName().toLowerCase();
@@ -163,7 +178,7 @@ public class TestController {
         System.out.println("Get current weather information of city "+cityname);
         List<WeatherEntity> resultDataList = new ArrayList<>();
         //Else fetch from weather api and save into database and then send back.
-        final String url = "https://api.openweathermap.org/data/2.5/weather?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "https://api.openweathermap.org/data/2.5/weather?q="+cityname+"&units=metric&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<Current> responseEntity = restTemplate.getForEntity(url, Current.class);
         Current currentWeather = responseEntity.getBody();
         WeatherEntity weatherData = new WeatherEntity();

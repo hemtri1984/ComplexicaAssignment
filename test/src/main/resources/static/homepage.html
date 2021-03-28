@@ -4,55 +4,48 @@
     <script src="./jquery-3.4.1.min.js">  </script>
 
     <script type="text/javascript">
-        const baseUrl = "http://localhost:8085/";
-        const columnHeadNames = ['Title', 'Customer Logo', 'Link'];
 
-        function renderTableHead(columnHeadNames) {
-            let head = '<thead><tr>';
-            for (let i=0, length=columnHeadNames.length; i<length; i++) {
-                head += '<th>' + columnHeadNames[i] + '</th>';
-            }
-            head += '</tr></thead>';
-            return head;
-        }
-
-        function renderTableBody(data) {
-            let body = '<tbody>';
-            for (let i=0, length=data.length; i<length; i++) {
-                body += '<tr>';
-                body += '<td>' + data[i].label + '</td>';
-                body += '<td><img height="74px" src="' + data[i].featuredImage + '" /></td>';
-                body += '<td align="center" width="10%"><a href="' + data[i].url + '">Link</a></td>';
-                body += '</tr>';
-            }
-            body += '</tbody>';
-            return body;
-        }
-
-        function renderTable(headNames, bodyData) {
-            let table = '<table border="1px">' + renderTableHead(headNames) + renderTableBody(bodyData) + '</table>';
-            return table;
-        }
-
-        function getPostListing () {
-            $.get(baseUrl + "post-list", function(data){
-                $('#post-list-table').append($(renderTable(columnHeadNames, data)));
-            }, "json");
-        }
-
-        function getWelcomeMsg() {
-            $.get(baseUrl + "welcomes-msg",  function (data) {
-                $('#welcome-msg').append("Hello, " + data);
-            });
-        }
 
         function getItineraryInfo(date) {
-            if(date) {
-                alert("Generating Itinerary Info of date: "+date);
-            } else {
-                alert("Please enter the date!");
+            event.preventDefault();
+            if(date) {//if user select date also, then download all forecast data to get data from 12 to 6 pm
+                date = setDateFormat(date);
+                getItineraryInfoCall(date);
             }
         }
+
+        function getItineraryInfoCall(date) {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/itinerary",
+                    headers: {'traveldate': date},
+                    timeout: 60000,
+                    success: function (data) {
+                        var rain=undefined;
+                        var cold = undefined;
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].temperature < 5) {
+                                cold = "Please take a coat";
+                            }
+                            if(data[i].weather === "cloud" || data[i].weather === "rain") {
+                                rain = "Please take an umbrella";
+                            }
+                            addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                        }
+                        if(cold) {
+                            alert(cold);
+                        }
+                        if(rain) {
+                            alert(rain);
+                        }
+                    },
+                    error: function (e) {
+                        alert(e);
+                    }
+                });
+        }
+
 
         function addRow(tableID, cityname, countryname, temperature, weather, date, time) {
 
@@ -66,7 +59,7 @@
             var cell2 = row.insertCell(1);
             cell2.innerHTML = countryname;
             var cell3 = row.insertCell(2);
-            cell3.innerHTML = temperature;
+            cell3.innerHTML = temperature + "&#8451;";
             var cell4 = row.insertCell(3);
             cell4.innerHTML = weather;
             var cell5 = row.insertCell(4);
@@ -126,10 +119,6 @@
         }
 
         function getTodaysData(city) {
-            /*$.get(baseUrl + "current",  function (data) {
-                    $('#welcome-msg').append("Hello, " + data);
-                });*/
-
                 $.ajax({
                     type: "GET",
                     contentType: "application/json",
@@ -298,13 +287,10 @@
         function generateSummary() {
             event.preventDefault();
             alert("Generating Summary")
-            //addRow("tb002");
         }
 
         $(document).ready(function(){
             validateItineraryDate();
-            //getWelcomeMsg();
-            //getPostListing();
             });
     </script>
 
@@ -349,12 +335,6 @@
           <th>Time</th>
         </tr>        
       </table></div>
-
-    <h1 id="welcome-msg" align="center">
-
-    </h1>
-
-    <div id="post-list-table" align="center">
 
 </div>
 
