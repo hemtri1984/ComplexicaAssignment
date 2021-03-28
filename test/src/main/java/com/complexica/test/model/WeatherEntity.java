@@ -1,41 +1,62 @@
 package com.complexica.test.model;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="weather")
-public class WeatherEntity {
+public class WeatherEntity implements Serializable {
+    private static final long serialVersionUID = -3556308911813478176L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String cityName;
+    private String cityname;
     private String country;
-    private String countryCode;
+    private String countrycode;
     private Float temperature;
     private String weather;
-    private String weatherDate;
-    private Long recordTime;
+    private String weatherdate;
+    private String weathertime;
+    private Date recordtime;
+    private Boolean cache;
 
     public Long getId() {
         return id;
     }
 
+    public String getWeathertime() {
+        return weathertime;
+    }
+
+    public void setWeathertime(String weathertime) {
+        this.weathertime = weathertime;
+    }
+
+    public Boolean getCache() {
+        return cache;
+    }
+
+    public void setCache(Boolean cache) {
+        this.cache = cache;
+    }
+
     public String getDate() {
-        return weatherDate;
+        return weatherdate;
     }
 
     public void setDate(String weatherDate) {
-        this.weatherDate = weatherDate;
+        this.weatherdate = weatherDate;
     }
 
-    public Long getRecordTime() {
-        return recordTime;
+    public Date getRecordTime() {
+        return recordtime;
     }
 
-    public void setRecordTime(Long recordTime) {
-        this.recordTime = recordTime;
+    public void setRecordTime(Date recordTime) {
+        this.recordtime = recordTime;
     }
 
     public String getWeather() {
@@ -55,11 +76,11 @@ public class WeatherEntity {
     }
 
     public String getCountryCode() {
-        return countryCode;
+        return countrycode;
     }
 
     public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+        this.countrycode = countryCode;
     }
 
     public String getCountryName() {
@@ -71,11 +92,11 @@ public class WeatherEntity {
     }
 
     public String getCityName() {
-        return cityName;
+        return cityname;
     }
 
     public void setCityName(String cityName) {
-        this.cityName = cityName;
+        this.cityname = cityName;
     }
 
     public void setId(Long id) {
@@ -88,31 +109,35 @@ public class WeatherEntity {
         if (o == null || getClass() != o.getClass()) return false;
         WeatherEntity that = (WeatherEntity) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(cityName, that.cityName) &&
+                Objects.equals(cityname, that.cityname) &&
                 Objects.equals(country, that.country) &&
-                Objects.equals(countryCode, that.countryCode) &&
+                Objects.equals(countrycode, that.countrycode) &&
                 Objects.equals(temperature, that.temperature) &&
                 Objects.equals(weather, that.weather) &&
-                Objects.equals(recordTime, that.recordTime) &&
-                Objects.equals(weatherDate, that.weatherDate) ;
+                Objects.equals(recordtime, that.recordtime) &&
+                Objects.equals(weatherdate, that.weatherdate) &&
+                Objects.equals(weathertime, that.weathertime) &&
+                Objects.equals(cache, that.cache);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, country+cityName);
+        return Objects.hash(id, country+cityname);
     }
 
     @Override
     public String toString() {
         return "NameEntity{" +
                 "id=" + id +
-                ", cityName='" + cityName + '\'' +
+                ", cityName='" + cityname + '\'' +
                 ", countryName='" + country + '\'' +
-                ", countryCode='" + countryCode + '\'' +
+                ", countryCode='" + countrycode + '\'' +
                 ", temperature='" + temperature + '\'' +
                 ", weather='" + weather + '\'' +
-                ", recordTime='" + recordTime + '\'' +
-                ", date='" + weatherDate + '\'' +
+                ", recordTime='" + recordtime + '\'' +
+                ", date='" + weatherdate + '\'' +
+                ", date='" + weathertime + '\'' +
+                ", cache='" + cache + '\'' +
                 '}';
     }
 

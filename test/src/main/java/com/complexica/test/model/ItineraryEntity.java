@@ -11,7 +11,7 @@ public class ItineraryEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String itineraryName;
-    private String cityName;
+    private String cityname;
     private String country;
     private Float temperature;
     private String weather;
@@ -48,11 +48,11 @@ public class ItineraryEntity {
     }
 
     public String getCityName() {
-        return cityName;
+        return cityname;
     }
 
     public void setCityName(String cityName) {
-        this.cityName = cityName;
+        this.cityname = cityName;
     }
 
     public String getAdvice() {
@@ -98,7 +98,7 @@ public class ItineraryEntity {
         ItineraryEntity that = (ItineraryEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(itineraryName, that.itineraryName) &&
-                Objects.equals(cityName, that.cityName) &&
+                Objects.equals(cityname, that.cityname) &&
                 Objects.equals(country, that.country) &&
                 Objects.equals(temperature, that.temperature) &&
                 Objects.equals(weather, that.weather) &&
@@ -117,7 +117,7 @@ public class ItineraryEntity {
         return "NameEntity{" +
                 "id=" + id +
                 ", itineraryName='" + itineraryName + '\'' +
-                ", cityName='" + cityName + '\'' +
+                ", cityName='" + cityname + '\'' +
                 ", country='" + country + '\'' +
                 ", temperature='" + temperature + '\'' +
                 ", weather='" + weather + '\'' +

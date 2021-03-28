@@ -22,23 +22,23 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     @Override
-    public WeatherEntity findWeatherOfCity(String city) {
+    public List<WeatherEntity> findWeatherOfCity(String city) {
         return weatherRepository.getWeather(city);
     }
 
     @Override
-    public WeatherEntity findWeatherOfCity(String city, String date) {
+    public List<WeatherEntity> findWeatherOfCity(String city, String date) {
         return weatherRepository.getWeather(city, date);
     }
 
     @Override
-    public WeatherEntity invalidateAndRefreshWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date) {
-        return weatherRepository.updateWeather(city, countryName, countryCode, temperature, weather, date, new Date().getTime());
+    public WeatherEntity invalidateAndRefreshWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date, String time) {
+        return weatherRepository.updateWeather(city, countryName, countryCode, temperature, weather, date, time, new Date().getTime());
     }
 
     @Override
-    public void createWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date) {
-        weatherRepository.createWeather(city, countryName, countryCode, temperature, weather, date, new Date());
+    public void createWeatherData(String city, String countryName, String countryCode, Float temperature, String weather, String date, String time) {
+        weatherRepository.createWeather(city, countryName, countryCode, temperature, weather, date, time, new Date());
     }
     
 }

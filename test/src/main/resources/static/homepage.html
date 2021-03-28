@@ -54,25 +54,25 @@
             }
         }
 
-        function addRow(tableID) {
+        function addRow(tableID, cityname, countryname, temperature, weather, date, time) {
 
             var table = document.getElementById(tableID);
-
-            var time = "(3:00 PM)";
 
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
 
             var cell1 = row.insertCell(0);
-            cell1.innerHTML = "City 1";
+            cell1.innerHTML = cityname;
             var cell2 = row.insertCell(1);
-            cell2.innerHTML = "Country 1";
+            cell2.innerHTML = countryname;
             var cell3 = row.insertCell(2);
-            cell3.innerHTML = "Country Code 1";
+            cell3.innerHTML = temperature;
             var cell4 = row.insertCell(3);
-            cell4.innerHTML = "Temperature 1" + time + ", Temperature 2"+time;
+            cell4.innerHTML = weather;
             var cell5 = row.insertCell(4);
-            cell5.innerHTML = "Cloud 1";
+            cell5.innerHTML = date;
+            var cell6 = row.insertCell(5);
+            cell6.innerHTML = time;
 
         }
 
@@ -121,7 +121,7 @@
                 mm='0'+mm
             }
 
-            today = yyyy+'/'+mm+'/'+dd;
+            today = yyyy+'-'+mm+'-'+dd;
             return today;
         }
 
@@ -134,13 +134,17 @@
                     type: "GET",
                     contentType: "application/json",
                     url: "/current",
-                    headers: {"cityname": city},
+                    headers: {'cityname': city},
                     timeout: 60000,
                     success: function (data) {
-
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].cache === false) {
+                                addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                            }
+                        }
                     },
                     error: function (e) {
-                        
+                        alert(e);
                     }
                 });
         }
@@ -150,10 +154,14 @@
                     type: "GET",
                     contentType: "application/json",
                     url: "/forecast",
-                    headers: {"cityname": city, "date": date},
+                    headers: {'cityname': city, 'traveldate': date},
                     timeout: 60000,
                     success: function (data) {
-
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].cache === false) {
+                                addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                            }
+                        }
                     },
                     error: function (e) {
                         
@@ -161,32 +169,67 @@
                 });
         }
 
-        function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
-            alert("Form submitted. City 1: "+city1+" Date1: "+date1+" City 2:"+city2+" date2: "+date2);
+        function setDateFormat(date) {
+            var datearr = date.split("-");
+            if(datearr.length > 2) {
+                return datearr[2]+"/"+datearr[1]+"/"+datearr[0];
+            }
+        }
+
+        function validateDate(inputdate) {
             var today = new Date();
-            if(city1 && date1) {
-                if(date1 === getTodayDate()) {//get today forecast
+            var hour = today.getHours();
+            var date = today.getDate();
+            var datearr = inputdate.split("/");
+            if(datearr.length > 2 && datearr[0] == date && hour > 18) {//if user set today date which is after 6 pm, then validation failed
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
+            event.preventDefault();
+            if(city1) {
+                if(date1) {//if user select date also, then download all forecast data to get data from 12 to 6 pm
+                    date1 = setDateFormat(date1);
+                    if(validateDate(date1) === true) {
+                        getForecastData(city1, date1);
+                    } else {
+                        alert('Please choose different date on first date field!')
+                    }
+                } else {//get current weather data
                     getTodaysData(city1);
-                } else {//get next 5 days forecast
-                    getForecastData(city1, date1);
                 }
             }
 
-            if(city2 && date2) {
-                if(date2 === getTodayDate()) {//get today forecast
+            if(city2) {
+                if(date2) {
+                    date2 = setDateFormat(date2);
+                    if(validateDate(date2) === true) {
+                        getForecastData(city2, date2);
+                    } else {
+                        alert('Please choose different date on second date field!')
+                    }
+                } else {
                     getTodaysData(city2);
-                } else {//get next 5 days forecast
-                    getForecastData(city2, date2);
                 }
             }
 
-            if(city3 && date3) {
-                if(date3 === getTodayDate()) {//get today forecast
-                    getTodaysData(city3);
+            if(city3) {
+                if(date3) {//get today forecast
+                    date3 = setDateFormat(date3);
+                    if(validateDate(date3) === true) {
+                        getForecastData(city3, date3);
+                    } else {
+                        alert('Please choose different date on third date field!')
+                    }
                 } else {//get next 5 days forecast
-                    getForecastData(city3, date3);
+                    getTodaysData(city3);
                 }
             }
+
+            alert('data submitted successfully!')
 
         }
 
@@ -212,7 +255,7 @@
 
         function generateSummary() {
             alert("Generating Summary")
-            addRow("tb002");
+            //addRow("tb002");
         }
 
         $(document).ready(function(){
@@ -230,7 +273,7 @@
       <label for="cityname1">City Name:</label>
       <input type="text" id="cityname1" name="cityname" value="" required placeholder="First City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate1" name="Travel Date" required><br/>
+      <input type="date" id="traveldate1" name="Travel Date"><br/>
       <label for="cityname2">City Name:</label>
       <input type="text" id="cityname2" name="cityname" value="" placeholder="Second City Name">
       <label for="traveldate">Travel Date:</label>
@@ -256,9 +299,10 @@
         <tr id="tableheader">
           <th>City Name</th>
           <th>Country Name</th>
-          <th>Country code</th>
           <th>Temperature</th>
           <th>Weather</th>
+          <th>Date</th>
+          <th>Time</th>
         </tr>        
       </table></div>
 

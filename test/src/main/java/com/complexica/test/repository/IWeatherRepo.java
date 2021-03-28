@@ -15,18 +15,18 @@ public interface IWeatherRepo extends JpaRepository<WeatherEntity, Long> {
     @Query("select we from WeatherEntity we")
     List<WeatherEntity> findAll();
 
-    @Query("select we from WeatherEntity we where we.cityName = :cityname")
-    WeatherEntity getWeather(@Param("cityname") String cityName);
+    @Query("select we from WeatherEntity we where we.cityname = :cityname")
+    List<WeatherEntity> getWeather(@Param("cityname") String cityName);
 
-    @Query("select we from WeatherEntity we where we.cityName = :cityname and we.weatherDate = :date")
-    WeatherEntity getWeather(@Param("cityname") String cityName, @Param("date")String date);
+    @Query("select we from WeatherEntity we where we.cityname = :cityname and we.weatherdate = :date")
+    List<WeatherEntity> getWeather(@Param("cityname") String cityName, @Param("date")String date);
 
-    @Query("update WeatherEntity we set we.country = :countryname, we.countryCode = :ccode, we.temperature = :temp, we.weather = :weather, we.recordTime = :time  where we.cityName = :cityname and we.weatherDate = :date")
-    WeatherEntity updateWeather(@Param("cityname") String cityName, @Param("countryname") String countryName, @Param("ccode") String countryCode, @Param("temp") Float temperature, @Param("weather") String weather, @Param("date") String date, @Param("time") Long recordTime);
+    @Query("update WeatherEntity we set we.country = :countryname, we.countrycode = :ccode, we.temperature = :temp, we.weather = :weather, we.weathertime = :weathertime, we.recordtime = :time  where we.cityname = :cityname and we.weatherdate = :date")
+    WeatherEntity updateWeather(@Param("cityname") String cityName, @Param("countryname") String countryName, @Param("ccode") String countryCode, @Param("temp") Float temperature, @Param("weather") String weather, @Param("date") String date, @Param("weathertime") String weathertime, @Param("time") Long recordTime);
 
     @Modifying
-    @Query(value = "insert into weather (cityName, country, countryCode, temperature, weather, weatherDate, recordTime) VALUES (:cityname,:countryname, :ccode, :temp, :weather, :date, :time)", nativeQuery = true)
+    @Query(value = "insert into weather (cityname, country, countrycode, temperature, weather, weatherdate, weathertime, recordtime) VALUES (:cityname,:countryname, :ccode, :temp, :weather, :date, :weathertime, :time)", nativeQuery = true)
     @Transactional
-    void createWeather(@Param("cityname") String cityName, @Param("countryname") String countryName, @Param("ccode") String countryCode, @Param("temp") Float temperature, @Param("weather") String weather, @Param("date") String date, @Param("time") Date recordTime);
+    void createWeather(@Param("cityname") String cityName, @Param("countryname") String countryName, @Param("ccode") String countryCode, @Param("temp") Float temperature, @Param("weather") String weather, @Param("date") String date, @Param("weathertime") String weathertime, @Param("time") Date recordTime);
 
 }

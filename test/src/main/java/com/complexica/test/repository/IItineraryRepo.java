@@ -22,7 +22,7 @@ public interface IItineraryRepo extends JpaRepository<ItineraryEntity, Long> {
     ItineraryEntity getItineraryOfDate(@Param("traveldate") String travelDate);*/
 
     @Modifying
-    @Query(value = "insert into itinerary (itineraryName, cityName, country, temperature, weather, travelDate, advice, timestamp) VALUES (:itiname,:cityname, :country, :temp, :weather, :tdate, :advice, :timestamp)", nativeQuery = true)
+    @Query(value = "insert into itinerary (itineraryName, cityname, country, temperature, weather, travelDate, advice, timestamp) VALUES (:itiname,:cityname, :country, :temp, :weather, :tdate, :advice, :timestamp)", nativeQuery = true)
     @Transactional
     void createItinerary(@Param("itiname") String itineraryName, @Param("cityname") String cityName, @Param("country") String country, @Param("temp") Float temperature, @Param("weather") String weather, @Param("tdate") String travelDate, @Param("advice") String advice, @Param("timestamp") Long timestamp);
 
