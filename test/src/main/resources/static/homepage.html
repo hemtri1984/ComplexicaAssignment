@@ -190,6 +190,7 @@
 
         function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
             event.preventDefault();
+            showTable();
             if(city1) {
                 if(date1) {//if user select date also, then download all forecast data to get data from 12 to 6 pm
                     date1 = setDateFormat(date1);
@@ -234,12 +235,53 @@
         }
 
         function saveItinerary(city1, date1, city2, date2, city3, date3) {
-            alert("Itinerary Saved")
-            var table = document.getElementById("tb001");
-            if (table.style.display === "none") {
-                showTable();
+            hideTable();            
+            // Check browser support
+            if (typeof(Storage) !== "undefined") {
+                // Store
+                if(city1 && date1) {
+                    localStorage.setItem("cityone", city1);
+                    localStorage.setItem("dateone", date1);
+                }
+                if(city2 && date2) {
+                    localStorage.setItem("citytwo", city2);
+                    localStorage.setItem("datetwo", date2);
+                }
+                if(city3 && date3) {
+                    localStorage.setItem("citythree", city3);
+                    localStorage.setItem("datethree", date3);
+                }
+                alert('Itinerary Saved Successfully!')
             } else {
-                hideTable();
+                document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+            }
+        }
+
+        function showItinerary() {
+            event.preventDefault();
+            // Check browser support
+            if (typeof(Storage) !== "undefined") {
+                // Store
+                var cityone = localStorage.getItem("cityone");
+                var dateone = localStorage.getItem("dateone");
+                if(cityone && dateone) {
+                    document.getElementById("cityname1").value = cityone;
+                    document.getElementById("traveldate1").value = dateone;
+                }
+                var citytwo = localStorage.getItem("citytwo");
+                var datetwo = localStorage.getItem("datetwo");
+                if(citytwo && datetwo) {
+                    document.getElementById("cityname2").value = citytwo;
+                    document.getElementById("traveldate2").value = datetwo;
+                }
+                var citythree = localStorage.getItem("citythree");
+                var datethree = localStorage.getItem("datethree");
+                if(citythree && datethree) {
+                    document.getElementById("cityname3").value = citythree;
+                    document.getElementById("traveldate3").value = datethree;
+                }
+            } else {
+                document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
             }
         }
 
@@ -254,6 +296,7 @@
         }
 
         function generateSummary() {
+            event.preventDefault();
             alert("Generating Summary")
             //addRow("tb002");
         }
@@ -286,6 +329,7 @@
             document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
       <input type="submit" value="Save Itineraty" onclick="saveItinerary(document.getElementById('cityname1').value, document.getElementById('traveldate1').value, 
       document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
+      <input type="submit" value="Show Itineraty" onclick="showItinerary()">
       <input type="button" value="Generate Summary" onclick="generateSummary()">
     </form>
     <br/><br/>
@@ -294,7 +338,7 @@
       <input type="submit" value="Get Itinerary" onclick="getItineraryInfo(document.getElementById('itineraryinfo').value)">
     </form>
     <br/><br/>
-    <div id="tb001"><table id="tb002" style="width:100%" border="1">
+    <div id="tb001"><table id="tb002" style="width:100%;" border="1">
         <caption>Weather Results</caption>
         <tr id="tableheader">
           <th>City Name</th>
