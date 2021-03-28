@@ -3,11 +3,9 @@ package com.complexica.test.controller;
 import com.complexica.test.model.Current;
 import com.complexica.test.model.ForecastData;
 import com.complexica.test.model.Main;
-import com.complexica.test.model.NameEntity;
 import com.complexica.test.model.Weather;
 import com.complexica.test.model.WeatherEntity;
 import com.complexica.test.service.ItineraryService;
-import com.complexica.test.service.NameService;
 import com.complexica.test.service.WeatherService;
 import com.complexica.test.utils.AppUtility;
 import com.complexica.test.utils.IAppConstants;
@@ -35,8 +33,6 @@ import java.util.stream.Collectors;
 public class TestController {
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private NameService nameService;
     @Autowired
     private WeatherService weatherService;
     /*@Autowired
@@ -87,7 +83,7 @@ public class TestController {
 
     private List<WeatherEntity> getWeatherDataFromOpenweathermap(boolean invalidate, String cityname, String date) {
         //Else fetch from weather api and save into database and then send back.
-        final String url = "https://api.openweathermap.org/data/2.5/forecast?q="+cityname+"&units=metric&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "http://api.openweathermap.org/data/2.5/forecast?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<ForecastData> responseEntity = restTemplate.getForEntity(url, ForecastData.class);
         ForecastData currentWeather = responseEntity.getBody();
         String cityName = currentWeather.getCity().getName().toLowerCase();
@@ -178,7 +174,7 @@ public class TestController {
         System.out.println("Get current weather information of city "+cityname);
         List<WeatherEntity> resultDataList = new ArrayList<>();
         //Else fetch from weather api and save into database and then send back.
-        final String url = "https://api.openweathermap.org/data/2.5/weather?q="+cityname+"&units=metric&appid=fc4708b74b09c7921a14fa439aad48eb";
+        final String url = "https://api.openweathermap.org/data/2.5/weather?q="+cityname+"&appid=fc4708b74b09c7921a14fa439aad48eb";
         final ResponseEntity<Current> responseEntity = restTemplate.getForEntity(url, Current.class);
         Current currentWeather = responseEntity.getBody();
         WeatherEntity weatherData = new WeatherEntity();
@@ -201,16 +197,4 @@ public class TestController {
         resultDataList.add(weatherData);
         return resultDataList;
     }
-
-    @RequestMapping("/welcomes-msg")
-    @ResponseBody
-    public ResponseEntity<?> getWelcomeMsg(){
-        final List<NameEntity> names = nameService.findAllNames();
-        if (CollectionUtils.isEmpty(names)) {
-            return ResponseEntity.ok("No names found");
-        }
-        return ResponseEntity.ok(names.parallelStream().map(n -> n.getName()).collect(Collectors.joining(" and ")));
-    }
-
-
 }
