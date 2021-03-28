@@ -1,51 +1,75 @@
 <html>
 <head>
+    <link rel="stylesheet" href="style.css">
     <script src="./jquery-3.4.1.min.js">  </script>
 
     <script type="text/javascript">
-        const baseUrl = "http://localhost:8085/";
-        const columnHeadNames = ['Title', 'Customer Logo', 'Link'];
 
-        function renderTableHead(columnHeadNames) {
-            let head = '<thead><tr>';
-            for (let i=0, length=columnHeadNames.length; i<length; i++) {
-                head += '<th>' + columnHeadNames[i] + '</th>';
+
+        function getItineraryInfo(date) {
+            event.preventDefault();
+            if(date) {//if user select date also, then download all forecast data to get data from 12 to 6 pm
+                date = setDateFormat(date);
+                getItineraryInfoCall(date);
             }
-            head += '</tr></thead>';
-            return head;
         }
 
-        function renderTableBody(data) {
-            let body = '<tbody>';
-            for (let i=0, length=data.length; i<length; i++) {
-                body += '<tr>';
-                body += '<td>' + data[i].label + '</td>';
-                body += '<td><img height="74px" src="' + data[i].featuredImage + '" /></td>';
-                body += '<td align="center" width="10%"><a href="' + data[i].url + '">Link</a></td>';
-                body += '</tr>';
-            }
-            body += '</tbody>';
-            return body;
+        function getItineraryInfoCall(date) {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/itinerary",
+                    headers: {'traveldate': date},
+                    timeout: 60000,
+                    success: function (data) {
+                        var rain=undefined;
+                        var cold = undefined;
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].temperature < 5) {
+                                cold = "Please take a coat";
+                            }
+                            if(data[i].weather === "cloud" || data[i].weather === "rain") {
+                                rain = "Please take an umbrella";
+                            }
+                            addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                        }
+                        if(cold) {
+                            alert(cold);
+                        }
+                        if(rain) {
+                            alert(rain);
+                        }
+                    },
+                    error: function (e) {
+                        alert(e);
+                    }
+                });
         }
 
-        function renderTable(headNames, bodyData) {
-            let table = '<table border="1px">' + renderTableHead(headNames) + renderTableBody(bodyData) + '</table>';
-            return table;
+
+        function addRow(tableID, cityname, countryname, temperature, weather, date, time) {
+
+            var table = document.getElementById(tableID);
+
+            var rowCount = table.rows.length;
+            var row = table.insertRow(rowCount);
+
+            var cell1 = row.insertCell(0);
+            cell1.innerHTML = cityname;
+            var cell2 = row.insertCell(1);
+            cell2.innerHTML = countryname;
+            var cell3 = row.insertCell(2);
+            cell3.innerHTML = temperature + "&#8451;";
+            var cell4 = row.insertCell(3);
+            cell4.innerHTML = weather;
+            var cell5 = row.insertCell(4);
+            cell5.innerHTML = date;
+            var cell6 = row.insertCell(5);
+            cell6.innerHTML = time;
+
         }
 
-        function getPostListing () {
-            $.get(baseUrl + "post-list", function(data){
-                $('#post-list-table').append($(renderTable(columnHeadNames, data)));
-            }, "json");
-        }
-
-        function getWelcomeMsg() {
-            $.get(baseUrl + "welcomes-msg",  function (data) {
-                $('#welcome-msg').append("Hello, " + data);
-            });
-        }
-
-        function showItineraryView() {
+        function validateItineraryDate() {
             var today = new Date();
             var maxDay = new Date();
             maxDay.setDate(maxDay.getDate()+5);
@@ -78,15 +102,195 @@
             document.getElementById("traveldate3").setAttribute("max", maxdate);
         }
 
-        function todayDate() {
+        function getTodayDate() {//Return today date in format of dd/mm/yyyy
             var today = new Date();
-            return "2021-03-27";
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            if(dd<10){
+                dd='0'+dd
+            } 
+            if(mm<10){
+                mm='0'+mm
+            }
+
+            today = yyyy+'-'+mm+'-'+dd;
+            return today;
+        }
+
+        function getTodaysData(city) {
+                $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/current",
+                    headers: {'cityname': city},
+                    timeout: 60000,
+                    success: function (data) {
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].cache === false) {
+                                addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        alert(e);
+                    }
+                });
+        }
+
+        function getForecastData(city, date) {
+            $.ajax({
+                    type: "GET",
+                    contentType: "application/json",
+                    url: "/forecast",
+                    headers: {'cityname': city, 'traveldate': date},
+                    timeout: 60000,
+                    success: function (data) {
+                        for(var i=0; i < data.length; i++) {
+                            if(data[i].cache === false) {
+                                addRow("tb002", data[i].cityName, data[i].countryName, data[i].temperature, data[i].weather, data[i].date, data[i].weathertime);
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        
+                    }
+                });
+        }
+
+        function setDateFormat(date) {
+            var datearr = date.split("-");
+            if(datearr.length > 2) {
+                return datearr[2]+"/"+datearr[1]+"/"+datearr[0];
+            }
+        }
+
+        function validateDate(inputdate) {
+            var today = new Date();
+            var hour = today.getHours();
+            var date = today.getDate();
+            var datearr = inputdate.split("/");
+            if(datearr.length > 2 && datearr[0] == date && hour > 18) {//if user set today date which is after 6 pm, then validation failed
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function validateAndSubmitItinerary(city1, date1, city2, date2, city3, date3) {
+            event.preventDefault();
+            showTable();
+            if(city1) {
+                if(date1) {//if user select date also, then download all forecast data to get data from 12 to 6 pm
+                    date1 = setDateFormat(date1);
+                    if(validateDate(date1) === true) {
+                        getForecastData(city1, date1);
+                    } else {
+                        alert('Please choose different date on first date field!')
+                    }
+                } else {//get current weather data
+                    getTodaysData(city1);
+                }
+            }
+
+            if(city2) {
+                if(date2) {
+                    date2 = setDateFormat(date2);
+                    if(validateDate(date2) === true) {
+                        getForecastData(city2, date2);
+                    } else {
+                        alert('Please choose different date on second date field!')
+                    }
+                } else {
+                    getTodaysData(city2);
+                }
+            }
+
+            if(city3) {
+                if(date3) {//get today forecast
+                    date3 = setDateFormat(date3);
+                    if(validateDate(date3) === true) {
+                        getForecastData(city3, date3);
+                    } else {
+                        alert('Please choose different date on third date field!')
+                    }
+                } else {//get next 5 days forecast
+                    getTodaysData(city3);
+                }
+            }
+
+            alert('data submitted successfully!')
+
+        }
+
+        function saveItinerary(city1, date1, city2, date2, city3, date3) {
+            hideTable();            
+            // Check browser support
+            if (typeof(Storage) !== "undefined") {
+                // Store
+                if(city1 && date1) {
+                    localStorage.setItem("cityone", city1);
+                    localStorage.setItem("dateone", date1);
+                }
+                if(city2 && date2) {
+                    localStorage.setItem("citytwo", city2);
+                    localStorage.setItem("datetwo", date2);
+                }
+                if(city3 && date3) {
+                    localStorage.setItem("citythree", city3);
+                    localStorage.setItem("datethree", date3);
+                }
+                alert('Itinerary Saved Successfully!')
+            } else {
+                document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+            }
+        }
+
+        function showItinerary() {
+            event.preventDefault();
+            // Check browser support
+            if (typeof(Storage) !== "undefined") {
+                // Store
+                var cityone = localStorage.getItem("cityone");
+                var dateone = localStorage.getItem("dateone");
+                if(cityone && dateone) {
+                    document.getElementById("cityname1").value = cityone;
+                    document.getElementById("traveldate1").value = dateone;
+                }
+                var citytwo = localStorage.getItem("citytwo");
+                var datetwo = localStorage.getItem("datetwo");
+                if(citytwo && datetwo) {
+                    document.getElementById("cityname2").value = citytwo;
+                    document.getElementById("traveldate2").value = datetwo;
+                }
+                var citythree = localStorage.getItem("citythree");
+                var datethree = localStorage.getItem("datethree");
+                if(citythree && datethree) {
+                    document.getElementById("cityname3").value = citythree;
+                    document.getElementById("traveldate3").value = datethree;
+                }
+            } else {
+                document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+            }
+        }
+
+        function hideTable() {
+            var table = document.getElementById("tb001");
+            table.style.display = "none";
+        }
+
+        function showTable() {
+            var table = document.getElementById("tb001");
+            table.style.display = "block";
+        }
+
+        function generateSummary() {
+            event.preventDefault();
+            alert("Generating Summary")
         }
 
         $(document).ready(function(){
-            showItineraryView();
-            //getWelcomeMsg();
-            //getPostListing();
+            validateItineraryDate();
             });
     </script>
 
@@ -94,26 +298,43 @@
 <body>
     <h1>Itinerary Form</h1>
 
-    <form action="/">
+    <form>
       <label for="cityname1">City Name:</label>
-      <input type="text" id="cityname1" name="cityname" value="">
+      <input type="text" id="cityname1" name="cityname" value="" required placeholder="First City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate1" name="Travel Date" required><br/>
+      <input type="date" id="traveldate1" name="Travel Date"><br/>
       <label for="cityname2">City Name:</label>
-      <input type="text" id="cityname2" name="cityname" value="">
+      <input type="text" id="cityname2" name="cityname" value="" placeholder="Second City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate2" name="Travel Date" required><br/>
+      <input type="date" id="traveldate2" name="Travel Date"><br/>
       <label for="cityname3">City Name:</label>
-      <input type="text" id="cityname3" name="cityname" value="">
+      <input type="text" id="cityname3" name="cityname" value="" placeholder="Third City Name">
       <label for="traveldate">Travel Date:</label>
-      <input type="date" id="traveldate3" name="Travel Date" required>
-      <br/><br/><input type="submit" value="Submit">
-    </form> 
-    <h1 id="welcome-msg" align="center">
-
-    </h1>
-
-    <div id="post-list-table" align="center">
+      <input type="date" id="traveldate3" name="Travel Date">
+      <br/><br/><input type="submit" value="Submit" onclick="validateAndSubmitItinerary(document.getElementById('cityname1').value, document.getElementById('traveldate1').value, 
+            document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
+      <input type="submit" value="Save Itineraty" onclick="saveItinerary(document.getElementById('cityname1').value, document.getElementById('traveldate1').value, 
+      document.getElementById('cityname2').value, document.getElementById('traveldate2').value, document.getElementById('cityname3').value, document.getElementById('traveldate3').value)">
+      <input type="submit" value="Show Itineraty" onclick="showItinerary()">
+      <input type="button" value="Generate Summary" onclick="generateSummary()">
+    </form>
+    <br/><br/>
+    <form>
+      <input type="date" id="itineraryinfo" name="Date" required><br/>
+      <input type="submit" value="Get Itinerary" onclick="getItineraryInfo(document.getElementById('itineraryinfo').value)">
+    </form>
+    <br/><br/>
+    <div id="tb001"><table id="tb002" style="width:100%;" border="1">
+        <caption>Weather Results</caption>
+        <tr id="tableheader">
+          <th>City Name</th>
+          <th>Country Name</th>
+          <th>Temperature</th>
+          <th>Weather</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>        
+      </table></div>
 
 </div>
 
